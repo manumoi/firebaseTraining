@@ -14,19 +14,20 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const {dispatch} = useContext(AuthContext)
+  const {authDispatch} = useContext(AuthContext)
 
   const handleLogin = (e)=>{
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        dispatch({type:"LOGIN", payload:user})
+       authDispatch({type:"LOGIN", payload:user})
 
         setError(false);
         navigate('/');
       })
-      .catch((error) => {
+      .catch((err) => {
+        console.log(err)
         setError(true);
     });
   }
