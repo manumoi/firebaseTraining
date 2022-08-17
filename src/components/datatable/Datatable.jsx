@@ -3,8 +3,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { userColumns } from "../../datatablesource";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { db } from '../../firebase'
+import { collection, deleteDoc, doc, getDocs, onSnapshot } from "firebase/firestore";
+import { deleteUser } from "firebase/auth";
+import { db, auth } from '../../firebase';
 
 const Datatable = () => {
   const [data, setData] = useState([]);
@@ -13,12 +14,12 @@ const Datatable = () => {
     () => {
       // EBL WARNING: because the focus is [], this useEffect will be fired each time the datatable is rendered. 
       // Not optimal to fetch data this way if data request and data itself haven't changed.
-      const fetchData = async () => {
+      /*const fetchData = async () => {
         let list = []
         try {
           const querySnapshot = await getDocs(collection(db, "users"));
           querySnapshot.forEach((doc) => {
-            list.push({id:doc.id, ...doc.data()})
+            list.push({ id: doc.id, ...doc.data() })
           });
           setData(list)
         }
@@ -26,16 +27,35 @@ const Datatable = () => {
           console.log(err);
         }
       }
-      fetchData()
-    },
-    [])
+      fetchData()*/
+      const unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+        let list = [];
+        snapshot.docs.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        })
+        setData(list)
+      }, 
+      (error) => {
+        console.log(error);
+      });
+
+      // cleanup function to avoid creating a memory leak by calling it every time the component is mounted
+      return ()=>{
+        unsub();
+      }
+    }, [])
 
 
   console.log(data)
 
   const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "cities", "DC"));
-    setData(data.filter((item) => item.id !== id));
+    try {
+      await deleteDoc(doc(db, "users", id));
+      setData(data.filter((item) => item.id !== id));
+    }
+    catch (err2) {
+      console.log(err2);
+    }
   };
 
   const actionColumn = [

@@ -84,7 +84,7 @@ const New = ({ inputs, title }) => {
       setPwd("")
       // and navigate back to the proper page 
       // TODO make it dynamic, according to users or products
-      navigate('/users');
+      navigate(-1);
     }
     catch (err) {
       console.log(err);
@@ -143,7 +143,9 @@ const New = ({ inputs, title }) => {
                     onChange={handleInputChange}
                   />
                 </div>
-              ))}
+              ))
+              }
+              <br/>
               <button disabled={percentage!==null && percentage<100} type="submit">Send</button>
             </form>
           </div>
