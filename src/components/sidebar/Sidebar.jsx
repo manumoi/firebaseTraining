@@ -11,19 +11,21 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import SettingsSystemDaydreamOutlinedIcon from "@mui/icons-material/SettingsSystemDaydreamOutlined";
 import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { Link, Navigate } from "react-router-dom";
-import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
+import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext"
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
-  const { dispatch } = useContext(DarkModeContext);
+  const {dispatch} = useContext(DarkModeContext);
+  const {authDispatch} = useContext(AuthContext);
   const navigate = useNavigate()
 
   const handleLogout = ()=>{
-    dispatch({ type: "LOGOUT" })
-    navigate('/Login')
+    authDispatch({type:"LOGOUT", payload:null})
+    navigate('/')
+
   }
 
   return (
@@ -100,11 +102,11 @@ const Sidebar = () => {
       <div className="bottom">
         <div
           className="colorOption"
-          onClick={() => dispatch({ type: "LIGHT" })}
+          onClick={()=>dispatch({ type: "LIGHT" })}
         ></div>
         <div
           className="colorOption"
-          onClick={() => dispatch({ type: "DARK" })}
+          onClick={()=>dispatch({ type: "DARK" })}
         ></div>
       </div>
     </div>
